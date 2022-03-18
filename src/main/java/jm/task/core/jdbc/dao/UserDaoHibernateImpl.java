@@ -3,6 +3,7 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import java.util.List;
 
@@ -18,11 +19,11 @@ public class UserDaoHibernateImpl implements UserDao {
         session.beginTransaction();
         session.createSQLQuery("CREATE TABLE IF NOT EXISTS users (" +
                 " id INT AUTO_INCREMENT," +
-                        " name VARCHAR(30)," +
-                        " lastName VARCHAR(30)," +
-                        " age TINYINT," +
-                        " PRIMARY KEY(id)" +
-                        ");").executeUpdate();
+                " name VARCHAR(30)," +
+                " lastName VARCHAR(30)," +
+                " age TINYINT," +
+                " PRIMARY KEY(id)" +
+                ");").executeUpdate();
         session.getTransaction().commit();
     }
 
@@ -46,8 +47,11 @@ public class UserDaoHibernateImpl implements UserDao {
     public void removeUserById(long id) {
         Session session = Util.getSessionFactory().openSession();
         session.beginTransaction();
-        User user = session.get(User.class, id);
-        session.remove(user);
+        Query query = session.createQuery("DELETE FROM User WHERE id = :id");
+        query.setParameter("id", id);
+        query.executeUpdate();
+//        User user = session.get(User.class, id);
+//        session.remove(user);
         session.getTransaction().commit();
     }
 
